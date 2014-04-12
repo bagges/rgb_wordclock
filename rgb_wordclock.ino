@@ -80,7 +80,7 @@ uint8_t selectedLanguageMode = 0;
 const uint8_t RHEIN_RUHR_MODE = 0; //Define?
 const uint8_t WESSI_MODE = 1;
 
-uint8_t displayMode = DIY1;
+int displayMode = DIY1;
 
 CHSV defaultColor = CHSV(100, 255, 255);
 
