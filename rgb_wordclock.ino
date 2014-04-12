@@ -62,6 +62,7 @@ Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
 #define ARDUINO_LED 13 //Default Arduino LED
 #define DCF_PIN 2	         // Connection pin to DCF 77 device
 #define DCF_INTERRUPT 0		 // Interrupt number associated with pin
+#define LDR_PIN 0
 
 //dcf variables
 time_t time;
@@ -80,9 +81,12 @@ uint8_t selectedLanguageMode = 0;
 const uint8_t RHEIN_RUHR_MODE = 0; //Define?
 const uint8_t WESSI_MODE = 1;
 
+boolean autoBrightnessEnabled = true;
+
 int displayMode = DIY1;
 
-CHSV defaultColor = CHSV(100, 255, 255);
+CRGB defaultColor = CRGB::White;
+uint8_t colorIndex = 0;
 
 int testHours = 0;
 int testMinutes = 0;
@@ -98,11 +102,13 @@ long waitUntilOff = 0;
 long waitUntilFastTest = 0;
 long waitUntilHeart = 0;
 long waitUntilDCF = 0;
+long waitUntilLDR = 0;
 
 //forward declaration
 void fastTest();
 void clockLogic();
 void doIRLogic();
+void doLDRLogic();
 void makeParty();
 void off();
 void showHeart();
@@ -111,7 +117,7 @@ void resetAndBlack();
 void resetStrip();
 void displayStripRandomColor();
 void displayStrip();
-void displayStrip(CHSV colorCode);
+void displayStrip(CRGB colorCode);
 void timeToStrip(uint8_t hours,uint8_t minutes);
 void doDCFLogic();
 
@@ -136,6 +142,8 @@ void setup() {
 		strip[i] = 0;
 	}
 	FastLED.addLeds<WS2812B, STRIP_DATA_PIN, GRB>(leds, NUM_LEDS);
+	resetAndBlack();
+	displayStrip();
 	
 	//setup dcf
 	DCF.Start();
@@ -151,13 +159,11 @@ void setup() {
 	
 	//setup ir
 	irrecv.enableIRIn();
-
-	resetAndBlack();
-	displayStrip();
 }
 
 void loop() {
 	doIRLogic();
+	doLDRLogic();
 	switch(displayMode) {
 		case ONOFF:
 			off();
@@ -189,6 +195,18 @@ unsigned long getDCFTime() {
 	return DCFtime;
 }
 
+void doLDRLogic() {
+	if(millis() >= waitUntilLDR && autoBrightnessEnabled) {
+		DEBUG_PRINT("doing LDR logic");
+		waitUntilLDR = millis();
+		int ldrVal = map(analogRead(LDR_PIN), 0, 1023, 0, 150);
+		FastLED.setBrightness(255-ldrVal);
+		FastLED.show();
+		DEBUG_PRINT(ldrVal);
+		waitUntilLDR += oneSecondDelay;
+	}
+}
+
 void doIRLogic() {
 	uint8_t brightness = 0;
 	if (irrecv.decode(&irDecodeResults)) {
@@ -199,7 +217,7 @@ void doIRLogic() {
 				displayMode = ONOFF;
 				break;
 			case AUTO:
-				//TODO
+				autoBrightnessEnabled = !autoBrightnessEnabled;
 				break;
 			case BLUE_DOWN:
 				//TODO
@@ -208,6 +226,7 @@ void doIRLogic() {
 				//TODO
 				break;
 			case BRIGHTER:
+				autoBrightnessEnabled = false;
 				brightness = FastLED.getBrightness();
 				if(brightness <= 255 - 50) {
 					FastLED.setBrightness(brightness + 50);
@@ -217,6 +236,7 @@ void doIRLogic() {
 				FastLED.show();
 				break;
 			case DIM:
+				autoBrightnessEnabled = false;
 				brightness = FastLED.getBrightness();
 				if(brightness >= 50) {
 					FastLED.setBrightness(brightness - 50);
@@ -227,6 +247,7 @@ void doIRLogic() {
 				break;
 			case DIY1:
 				displayMode = DIY1;
+				autoBrightnessEnabled = true;
 				//to force display update
 				testMinutes = -1;
 				testHours = -1;
@@ -250,12 +271,15 @@ void doIRLogic() {
 				displayMode = FLASH;
 				break;
 			case QUICK:
-				defaultColor.hue += 20;
+				defaultColor = nextColor();
 				displayStrip();
 				break;
 			case SLOW:
-				defaultColor.hue -= 20;
+				defaultColor = prevColor();
 				displayStrip();
+				break;
+			default:
+				DEBUG_PRINT("IR DEFAULT");
 				break;
 		}
 		irrecv.resume();
@@ -285,13 +309,14 @@ void off() {
 		DEBUG_PRINT("switching off");
 		waitUntilOff = millis();
 		resetAndBlack();
-		displayStrip(CHSV(0,0,0));
+		displayStrip(CRGB::Black);
 		waitUntilOff += halfSecondDelay;
 	}
 }
 
 void makeParty() {
 	if(millis() >= waitUntilParty) {
+		autoBrightnessEnabled = false;
 		DEBUG_PRINT("YEAH party party");
 		waitUntilParty = millis();
 		resetAndBlack();
@@ -305,6 +330,7 @@ void makeParty() {
 
 void showHeart() {
 	if(millis() >= waitUntilHeart) {
+		autoBrightnessEnabled = false;
 		DEBUG_PRINT("showing heart");
 		waitUntilHeart = millis();
 		resetAndBlack();
@@ -318,13 +344,14 @@ void showHeart() {
 		pushToStrip(37); pushToStrip(77);
 		pushToStrip(41); pushToStrip(61);
 		pushToStrip(59);
-		displayStrip(CHSV(0, 255,255));
+		displayStrip(CRGB::Red);
 		waitUntilHeart += oneSecondDelay;
 	}
 }
 
 void fastTest() {
 	if(millis() >= waitUntilFastTest) {
+		autoBrightnessEnabled = false;
 		DEBUG_PRINT("showing heart");
 		waitUntilFastTest = millis();
 		if(testMinutes >= 60) {
@@ -345,6 +372,47 @@ void fastTest() {
 }
 ///////////////////////
 
+CRGB prevColor() {
+	if(colorIndex > 0) {
+		colorIndex--;
+	}
+	return getColorForIndex();
+}
+CRGB nextColor() {
+	if(colorIndex < 9) {
+		colorIndex++;
+	}
+	return getColorForIndex();
+}
+
+CRGB getColorForIndex() {
+	switch(colorIndex) {
+		case 0:
+			return CRGB::White;
+		case 1:
+			return CRGB::Blue;
+		case 2:
+			return CRGB::Aqua;
+		case 3:
+			return CRGB::Green;
+		case 4:
+			return CRGB::Lime;
+		case 5:
+			return CRGB::Red;
+		case 6:
+			return CRGB::Magenta;
+		case 7:
+			return CRGB::Olive;
+		case 8:
+			return CRGB::Yellow;
+		case 9:
+			return CRGB::Silver;
+		default:
+			colorIndex = 0;
+			return CRGB::White;
+	}
+}
+
 void pushToStrip(int ledId) {
 	strip[stackptr] = ledId;
 	stackptr++;
@@ -353,7 +421,7 @@ void pushToStrip(int ledId) {
 void resetAndBlack() {
 	resetStrip();
 	for(int i = 0; i<NUM_LEDS; i++) {
-		leds[i] = CHSV(0,0,0);
+		leds[i] = CRGB::Black;
 	}
 }
 
@@ -375,7 +443,7 @@ void displayStrip() {
 	displayStrip(defaultColor);
 }
 
-void displayStrip(CHSV colorCode) {
+void displayStrip(CRGB colorCode) {
 	for(int i = 0; i<stackptr; i++) {
 		leds[strip[i]] = colorCode;
 	}
