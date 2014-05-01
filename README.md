@@ -25,3 +25,8 @@ All needed libraries can be found in my repositories.
 
 112                                        111          .                             .
 ```
+
+####Buy me a beer
+I am working on this in my spare time. So if you want to buy me a beer, please click the link below.
+
+https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=markus%2ebackes%40gmail%2ecom&lc=DE&no_note=0&cn=Mitteilung%20an%20den%20H%c3%a4ndler%3a&no_shipping=1&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
