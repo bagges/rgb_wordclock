@@ -5,7 +5,20 @@ Wordclock based on the popular WS2812B RGB LED strips
 
 More information can be found here: https://backes-markus.de/blog/?p=347
 
-All needed libraries can be found in my repositories.
+####Build
+
+1) Download Arduino 1.5.8 IDE from arduino.cc
+
+2) Install "FastLED", "Arduino-Libraries\DCF77" and "Time" libraries from my repositories
+
+3) Open Sketch and compile
+
+####Known Issues
+
+Compile Error: "IRremoteTools.cpp: 5: error: 'TKD2' was not declared in this scope"
+Solution: Delete libraries\RobotIRremote\IRremoteTools.cpp and libraries\RobotIRremote\IRremoteTools.h (see http://forum.arduino.cc/index.php?topic=188236.0)
+
+The clock is fast by exactly one minute.... Does anybody know why?
 
 ####LED Mapping
 
