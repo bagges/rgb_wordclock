@@ -35,6 +35,7 @@ Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
 #include <Time.h>
 #include <DCF77.h>
 #include <IRremote.h>
+#include "default_layout.h" //#include "alt_layout1.h"
 
 // IR defines
 #define ONOFF 0xFF02FD
@@ -334,16 +335,16 @@ void showHeart() {
 		DEBUG_PRINT("showing heart");
 		waitUntilHeart = millis();
 		resetAndBlack();
-		pushToStrip(29); pushToStrip(30); pushToStrip(70); pushToStrip(89);
-		pushToStrip(11); pushToStrip(48); pushToStrip(68); pushToStrip(91);
-		pushToStrip(7); pushToStrip(52); pushToStrip(107);
-		pushToStrip(6); pushToStrip(106);
-		pushToStrip(5); pushToStrip(105);
-		pushToStrip(15); pushToStrip(95);
-		pushToStrip(23); pushToStrip(83);
-		pushToStrip(37); pushToStrip(77);
-		pushToStrip(41); pushToStrip(61);
-		pushToStrip(59);
+		pushToStrip(L29); pushToStrip(L30); pushToStrip(L70); pushToStrip(L89);
+		pushToStrip(L11); pushToStrip(L48); pushToStrip(L68); pushToStrip(L91);
+		pushToStrip(L7); pushToStrip(L52); pushToStrip(L107);
+		pushToStrip(L6); pushToStrip(L106);
+		pushToStrip(L5); pushToStrip(L105);
+		pushToStrip(L15); pushToStrip(L95);
+		pushToStrip(L23); pushToStrip(L83);
+		pushToStrip(L37); pushToStrip(L77);
+		pushToStrip(L41); pushToStrip(L61);
+		pushToStrip(L59);
 		displayStrip(CRGB::Red);
 		waitUntilHeart += oneSecondDelay;
 	}
@@ -597,176 +598,175 @@ void timeToStrip(uint8_t hours,uint8_t minutes)
 //PUSH WORD HELPER
 ///////////////////////
 void pushES_IST()  {
-	pushToStrip(9);
-	pushToStrip(10);
-	pushToStrip(30);
-	pushToStrip(49);
-	pushToStrip(50);
+	pushToStrip(L9);
+	pushToStrip(L10);
+	pushToStrip(L30);
+	pushToStrip(L49);
+	pushToStrip(L50);
 }
 
 void pushFUENF1() {
-	pushToStrip(70);
-	pushToStrip(89);
-	pushToStrip(90);
-	pushToStrip(109);
+	pushToStrip(L70);
+	pushToStrip(L89);
+	pushToStrip(L90);
+	pushToStrip(L109);
 }
 
 void pushFUENF2() {
-	pushToStrip(74);
-	pushToStrip(85);
-	pushToStrip(94);
-	pushToStrip(105);
+	pushToStrip(L74);
+	pushToStrip(L85);
+	pushToStrip(L94);
+	pushToStrip(L105);
 }
 
 void pushNACH() {
-	pushToStrip(73);
-	pushToStrip(86);
-	pushToStrip(93);
-	pushToStrip(106);
+	pushToStrip(L73);
+	pushToStrip(L86);
+	pushToStrip(L93);
+	pushToStrip(L106);
 }
 
 void pushZEHN1() {
-	pushToStrip(8);
-	pushToStrip(11);
-	pushToStrip(28);
-	pushToStrip(31);
+	pushToStrip(L8);
+	pushToStrip(L11);
+	pushToStrip(L28);
+	pushToStrip(L31);
 }
 
 void pushVIERTEL() {
-	pushToStrip(47);
-	pushToStrip(52);
-	pushToStrip(67);
-	pushToStrip(72);
-	pushToStrip(87);
-	pushToStrip(92);
-	pushToStrip(107);
+	pushToStrip(L47);
+	pushToStrip(L52);
+	pushToStrip(L67);
+	pushToStrip(L72);
+	pushToStrip(L87);
+	pushToStrip(L92);
+	pushToStrip(L107);
 }
 
 void pushVOR() {
-	pushToStrip(6);
-	pushToStrip(13);
-	pushToStrip(26);
+	pushToStrip(L6);
+	pushToStrip(L13);
+	pushToStrip(L26);
 }
 
 void pushHALB() {
-	pushToStrip(5);
-	pushToStrip(14);
-	pushToStrip(25);
-	pushToStrip(34);
+	pushToStrip(L5);
+	pushToStrip(L14);
+	pushToStrip(L25);
+	pushToStrip(L34);
 }
 
 void pushONE() {
-	pushToStrip(113);
+	pushToStrip(L113);
 }
 
 void pushTWO() {
-	pushToStrip(110);
+	pushToStrip(L110);
 }
 
 void pushTHREE() {
-	pushToStrip(111);
+	pushToStrip(L111);
 }
 
 void pushFOUR() {
-	pushToStrip(112);
+	pushToStrip(L112);
 }
 
 void pushZWANZIG() {
-	pushToStrip(48);
-	pushToStrip(51);
-	pushToStrip(68);
-	pushToStrip(71);
-	pushToStrip(88);
-	pushToStrip(91);
-	pushToStrip(108);
+	pushToStrip(L48);
+	pushToStrip(L51);
+	pushToStrip(L68);
+	pushToStrip(L71);
+	pushToStrip(L88);
+	pushToStrip(L91);
+	pushToStrip(L108);
 }
 
 void pushZWOELF() {
-	pushToStrip(61);
-	pushToStrip(78);
-	pushToStrip(81);
-	pushToStrip(98);
-	pushToStrip(101);
+	pushToStrip(L61);
+	pushToStrip(L78);
+	pushToStrip(L81);
+	pushToStrip(L98);
+	pushToStrip(L101);
 }
 
-void pushEINS(bool s) 
-{
-	pushToStrip(4);
-	pushToStrip(15);
-	pushToStrip(24);
+void pushEINS(bool s) {
+	pushToStrip(L4);
+	pushToStrip(L15);
+	pushToStrip(L24);
 	if(s) {
-		pushToStrip(35);
+		pushToStrip(L35);
 	}
 }
 
 void pushZWEI() {
-	pushToStrip(75);
-	pushToStrip(84);
-	pushToStrip(95);
-	pushToStrip(104);
+	pushToStrip(L75);
+	pushToStrip(L84);
+	pushToStrip(L95);
+	pushToStrip(L104);
 }
 
 void pushDREI() {
-	pushToStrip(3);
-	pushToStrip(16);
-	pushToStrip(23);
-	pushToStrip(36);
+	pushToStrip(L3);
+	pushToStrip(L16);
+	pushToStrip(L23);
+	pushToStrip(L36);
 }
 
 void pushVIER() {
-	pushToStrip(76);
-	pushToStrip(83);
-	pushToStrip(96);
-	pushToStrip(103);
+	pushToStrip(L76);
+	pushToStrip(L83);
+	pushToStrip(L96);
+	pushToStrip(L103);
 }
 
 void pushSECHS() {
-	pushToStrip(2);
-	pushToStrip(17);
-	pushToStrip(22);
-	pushToStrip(37);
-	pushToStrip(42);
+	pushToStrip(L2);
+	pushToStrip(L17);
+	pushToStrip(L22);
+	pushToStrip(L37);
+	pushToStrip(L42);
 }
 
 void pushSIEBEN() {
-	pushToStrip(1);
-	pushToStrip(18);
-	pushToStrip(21);
-	pushToStrip(38);
-	pushToStrip(41);
-	pushToStrip(58);
+	pushToStrip(L1);
+	pushToStrip(L18);
+	pushToStrip(L21);
+	pushToStrip(L38);
+	pushToStrip(L41);
+	pushToStrip(L58);
 }
 
 void pushACHT() {
-	pushToStrip(77);
-	pushToStrip(82);
-	pushToStrip(97);
-	pushToStrip(102);
+	pushToStrip(L77);
+	pushToStrip(L82);
+	pushToStrip(L97);
+	pushToStrip(L102);
 }
 
 void pushNEUN() {
-	pushToStrip(39);
-	pushToStrip(40);
-	pushToStrip(59);
-	pushToStrip(60);
+	pushToStrip(L39);
+	pushToStrip(L40);
+	pushToStrip(L59);
+	pushToStrip(L60);
 }
 
 void pushZEHN() {
-	pushToStrip(0);
-	pushToStrip(19);
-	pushToStrip(20);
-	pushToStrip(39);
+	pushToStrip(L0);
+	pushToStrip(L19);
+	pushToStrip(L20);
+	pushToStrip(L39);
 }
 
 void pushELF() {
-	pushToStrip(54);
-	pushToStrip(65);
-	pushToStrip(74);
+	pushToStrip(L54);
+	pushToStrip(L65);
+	pushToStrip(L74);
 }
 
 void pushUHR() {
-	pushToStrip(80);
-	pushToStrip(99);
-	pushToStrip(100);
+	pushToStrip(L80);
+	pushToStrip(L99);
+	pushToStrip(L100);
 }
 ///////////////////////
