@@ -2,3 +2,4 @@ Visual Micro/
 *.atsln
 *.atsuo
 *.cppproj
+/Release/
