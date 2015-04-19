@@ -15,15 +15,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Dieses Programm ist Freie Software: Sie können es unter den Bedingungen
+Dieses Programm ist Freie Software: Sie kÃ¶nnen es unter den Bedingungen
 der GNU General Public License, wie von der Free Software Foundation,
 Version 3 der Lizenz oder (nach Ihrer Wahl) jeder neueren
-veröffentlichten Version, weiterverbreiten und/oder modifizieren.
+verÃ¶ffentlichten Version, weiterverbreiten und/oder modifizieren.
 
-Dieses Programm wird in der Hoffnung, dass es nützlich sein wird, aber
-OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
-Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
-Siehe die GNU General Public License für weitere Details.
+Dieses Programm wird in der Hoffnung, dass es nÃ¼tzlich sein wird, aber
+OHNE JEDE GEWÃ„HRLEISTUNG, bereitgestellt; sogar ohne die implizite
+GewÃ¤hrleistung der MARKTFÃ„HIGKEIT oder EIGNUNG FÃœR EINEN BESTIMMTEN ZWECK.
+Siehe die GNU General Public License fÃ¼r weitere Details.
 
 Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
 Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>. 
@@ -33,9 +33,13 @@ Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
 #include <FastLED.h>
 #include <Wire.h>
 #include <Time.h>
-#include <DCF77.h>
 #include <IRremote.h>
 #include "default_layout.h" //#include "alt_layout1.h"
+#include <esp8266_ntp.h>
+
+//wifi settings
+#define WIFI_SSID "myssid"
+#define WIFI_PASS "mypass"
 
 // IR defines
 #define ONOFF 0xFF02FD
@@ -61,14 +65,11 @@ Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
 #define STRIP_DATA_PIN 6
 #define IR_RECV_PIN 11
 #define ARDUINO_LED 13 //Default Arduino LED
-#define DCF_PIN 2	         // Connection pin to DCF 77 device
-#define DCF_INTERRUPT 0		 // Interrupt number associated with pin
 #define LDR_PIN 0
 
-//dcf variables
-time_t time;
-DCF77 DCF = DCF77(DCF_PIN,DCF_INTERRUPT);
-bool timeInSync = false;
+//time variables
+ESP8266_NTP esp8266_ntp;
+int gmtOffset = 0;
 
 uint8_t strip[NUM_LEDS];
 uint8_t stackptr = 0;
@@ -102,7 +103,6 @@ long waitUntilParty = 0;
 long waitUntilOff = 0;
 long waitUntilFastTest = 0;
 long waitUntilHeart = 0;
-long waitUntilDCF = 0;
 long waitUntilLDR = 0;
 
 //forward declaration
@@ -120,7 +120,6 @@ void displayStripRandomColor();
 void displayStrip();
 void displayStrip(CRGB colorCode);
 void timeToStrip(uint8_t hours,uint8_t minutes);
-void doDCFLogic();
 
 //#define DEBUG
 
@@ -146,12 +145,14 @@ void setup() {
 	resetAndBlack();
 	displayStrip();
 	
-	//setup dcf
-	DCF.Start();
+	//setup esp
+        if(esp8266_ntp.initialize(WIFI_SSID, WIFI_PASS) == 0) {
+            DEBUG_PRINT("Initialized!");
+            esp8266_ntp.setGMTOffset(gmtOffset);
+        }
 	setSyncInterval(30);
-	setSyncProvider(getDCFTime);
-	DEBUG_PRINT("Waiting for DCF77 time ... ");
-	DEBUG_PRINT("It will take at least 2 minutes until a first update can be processed.");
+	setSyncProvider(getNtpTime);
+	DEBUG_PRINT("Waiting for ESP8266 time ... ");
 	while(timeStatus()== timeNotSet) {
 		// wait until the time is set by the sync provider
 		DEBUG_PRINT(".");
@@ -187,13 +188,9 @@ void loop() {
 	}
 }
 
-unsigned long getDCFTime() {
-	time_t DCFtime = DCF.getTime();
-	// Indicator that a time check is done
-	if (DCFtime!=0) {
-		DEBUG_PRINT("sync");
-	}
-	return DCFtime;
+time_t getNtpTime() {
+    esp8266_ntp.setGMTOffset(gmtOffset);
+    return esp8266_ntp.getTime();
 }
 
 void doLDRLogic() {
@@ -770,3 +767,4 @@ void pushUHR() {
 	pushToStrip(L100);
 }
 ///////////////////////
+
