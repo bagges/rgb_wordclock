@@ -148,7 +148,7 @@ void setup() {
 	
 	//setup dcf
 	DCF.Start();
-	setSyncInterval(30);
+	setSyncInterval(3600); //every hour
 	setSyncProvider(getDCFTime);
 	DEBUG_PRINT("Waiting for DCF77 time ... ");
 	DEBUG_PRINT("It will take at least 2 minutes until a first update can be processed.");
