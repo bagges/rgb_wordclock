@@ -148,7 +148,7 @@ void setup() {
 	
 	//setup dcf
 	DCF.Start();
-	setSyncInterval(3600); //every hour
+	setSyncInterval(300); //every 5 minutes
 	setSyncProvider(getDCFTime);
 	DEBUG_PRINT("Waiting for DCF77 time ... ");
 	DEBUG_PRINT("It will take at least 2 minutes until a first update can be processed.");
@@ -165,6 +165,14 @@ void setup() {
 void loop() {
 	doIRLogic();
 	doLDRLogic();
+
+        //turn off clock between 3 and 4 oclock
+        if(hour() == 3) {
+                displayMode = ONOFF;
+        } else if(hour() == 4) {
+                displayMode = DIY1;
+        }
+
 	switch(displayMode) {
 		case ONOFF:
 			off();
