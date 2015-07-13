@@ -124,7 +124,15 @@ void timeToStrip(uint8_t hours,uint8_t minutes);
 //#define DEBUG
 
 #ifdef DEBUG
-	#define DEBUG_PRINT(str)  Serial.println (str)
+	#include <SoftwareSerial.h>
+#endif
+
+#ifdef DEBUG
+	SoftwareSerial debugSerial(9,10);
+#endif
+
+#ifdef DEBUG
+	#define DEBUG_PRINT(str)  debugSerial.println (str)
 #else
 	#define DEBUG_PRINT(str)
 #endif
@@ -132,7 +140,7 @@ void timeToStrip(uint8_t hours,uint8_t minutes);
 void setup() {
 	
 	#ifdef DEBUG
-		Serial.begin(9600);
+		debugSerial.begin(9600);
 	#endif
 	
 	pinMode(ARDUINO_LED, OUTPUT);
