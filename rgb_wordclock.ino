@@ -166,6 +166,9 @@ void setup() {
 		DEBUG_PRINT(".");
 		delay(2000);
 	}
+	#ifdef DEBUG
+		printTime();
+	#endif
 	
 	//setup ir
 	irrecv.enableIRIn();
@@ -196,7 +199,21 @@ void loop() {
 	}
 }
 
+#ifdef DEBUG
+void printTime() {
+	String time;
+	time.concat(hour()); time.concat(":"); time.concat(minute()); time.concat(":"); time.concat(second()); time.concat(" ");
+	time.concat(day()); time.concat("."); time.concat(month()); time.concat("."); time.concat(year());
+	DEBUG_PRINT(time);
+}
+#endif
+
 time_t getNtpTime() {
+	#ifdef DEBUG
+		DEBUG_PRINT("The time is:");
+		printTime();
+		DEBUG_PRINT("syncing...");
+	#endif
     esp8266_ntp.setGMTOffset(gmtOffset);
     return esp8266_ntp.getTime();
 }
