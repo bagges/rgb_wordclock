@@ -60,4 +60,4 @@ alt_layout1.h
 ####Buy me a beer
 I am working on this in my spare time. So if you want to buy me a beer, please click the Donate-Button on my blog:
 
-https://backes-markus.de/blog/
+https://blogges.de
